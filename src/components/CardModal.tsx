@@ -13,7 +13,7 @@ function CardModal({open, onClose, card}: CardModalProps){
     return(
     
             <Box  
-            sx={{ position: 'fixed', right: '0px' }} 
+            sx={{ position: 'fixed', right: '0px', top: '15px' }} 
                 onMouseLeave={onClose}>
                <img src={card?.img} alt={card?.name}  style={{height: '400px', margin: '15px'}} /> 
             </Box>

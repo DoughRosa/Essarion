@@ -43,30 +43,34 @@ function Board() {
 
     return (
         <>
+        <Grid display={'flex'} padding={'5px'} position={'fixed'} justifyContent={'center'} alignItems={'center'}
+                    sx={{ bottom: '15px', left: '0px', width: '290px', backgroundColor: 'red', flexWrap: 'wrap', margin: '15px'}}>
+                    {playerHand.map(card => (
+                        <Grid key={card.id}
+                        onMouseEnter={()=> onHover(card)}
+                        onMouseLeave={offHover}
+                        sx={{cursor: 'pointer'}}
+                        size={{xs: 3}}>
+                            <img src={card.img} alt="" style={{height: '110px', margin: '2px'}} />
+                        </Grid>
+                    ))}
+                </Grid>
         <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <Grid container sx={{ backgroundColor: 'blue', width: '900px', height: '720px' }}>
                 {rows.map((row)=> cols.map((col)=> {
                     const id = row+col;
                     return (
-                        <Grid key={id} size={{xs: 2}} border='solid 1px' sx={{width: '150px', height: '100px', backgroundColor: 'green'}}>
+                        <Grid key={id} size={{xs: 2}} border='solid 1px' sx={{width: '150px', height: '120px', backgroundColor: 'green'}}>
                             {id}
                         </Grid>
                     )
                 }))}
-
-                <Grid display={'flex'} padding={'5px'} sx={{width: '1000px', height: '120px', backgroundColor: 'red'}}>
-                    {playerHand.map(card => (
-                        <Box key={card.id}
-                        onMouseEnter={()=> onHover(card)}
-                        onMouseLeave={offHover}
-                        sx={{cursor: 'pointer'}}>
-                            <img src={card.img} alt="" style={{height: '110px', margin: '2px'}} />
-                        </Box>
-                    ))}
-                </Grid>
             </Grid>
 
-            <CardModal open={modalOpen} onClose={offHover} card={selectedCard}></CardModal>
+            <Box>
+                <CardModal open={modalOpen} onClose={offHover} card={selectedCard}></CardModal>
+                
+            </Box>    
         </Box>
         </>
     )
