@@ -1,12 +1,16 @@
-import './App.css'
-import Board from './components/Board'
+import './App.css';
+import Board from './components/Board';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
 function App() {
   return (
     <>
-            <Board></Board>
+          <Provider store={store}>
+            <Board/>
+          </Provider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

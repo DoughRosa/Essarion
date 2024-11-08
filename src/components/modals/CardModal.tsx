@@ -1,15 +1,17 @@
 import { Box } from "@mui/material";
-import CharacterInterface from "../interfaces/CharacterInterface";
+import CardInterface from '../../interfaces/CardInterface';
+import CharacterInterface from '../../interfaces/CharacterInterface';
 
 interface CardModalProps{
     open: boolean;
     onClose: ()=> void;
-    card: CharacterInterface | null;
+    card: CardInterface | CharacterInterface | null;
 }
 
 function CardModal({open, onClose, card}: CardModalProps){
     if (!open) return null;
     
+    console.log('MODAL', card)
     return(
     
             <Box  

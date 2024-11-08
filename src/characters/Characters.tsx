@@ -19,6 +19,7 @@ const characters: CharacterInterface[] = [
         life: 17,
         class: 'paladin',
         race: 'human',
+        position: 0
     },
     {   
         id: 'ESC002',
@@ -31,6 +32,7 @@ const characters: CharacterInterface[] = [
         life: 12,
         class: 'warrior',
         race: 'human',
+        position: 0
     },
     {
         id: 'ESC003',
@@ -43,6 +45,7 @@ const characters: CharacterInterface[] = [
         life: 7,
         class: 'Cleric',
         race: 'human',
+        position: 0
     },
     {
         id: 'ESC004',
@@ -55,6 +58,7 @@ const characters: CharacterInterface[] = [
         life: 6,
         class: 'cleric',
         race: 'human',
+        position: 0
     },
     {
         id: 'ESC005',
@@ -67,6 +71,7 @@ const characters: CharacterInterface[] = [
         life: 7,
         class: 'cleric',
         race: 'human',
+        position: 0
     },
     {
         id: 'ESC006',
@@ -79,6 +84,7 @@ const characters: CharacterInterface[] = [
         life: 10,
         class: 'warrior',
         race: 'human',
+        position: 0
     },
 ];
 

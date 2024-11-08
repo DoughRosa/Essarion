@@ -9,6 +9,7 @@ interface CharacterInterface {
     life: number,
     class: string,
     race: string,
+    position: number,
 }
 
 export default CharacterInterface;
