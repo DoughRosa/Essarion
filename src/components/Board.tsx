@@ -14,6 +14,7 @@ import {
   setModalOpen,
   setPlayerHoster,
   setPlayerHand,
+  setBoardCharacters,
 } from "../store/models/gameSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
@@ -21,26 +22,61 @@ const cols = [1, 2, 3, 4, 5, 6];
 const rows = [10, 20, 30, 40, 50, 60];
 
 function Board() {
-
   const [hosterHover, setHosterHover] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
-  const { playerHand, playerHoster, selectedCard, selectedCharacter, modalOpen } =
-  useAppSelector((state) => state.rootReducers.game);
+  const {
+    playerHand,
+    playerHoster,
+    boardCharacters,
+    selectedCard,
+    selectedCharacter,
+    modalOpen,
+  } = useAppSelector((state) => state.rootReducers.game);
+
+  useEffect(() => {
+    const hand = cards.map((card) => ({
+      id: card.id,
+      img: card.img,
+      name: card.name,
+      cost: card.cost,
+      class: card.class,
+      type: card.type,
+      subtype: card.subtype,
+    }));
+    dispatch(setPlayerHand(hand));
+  }, [dispatch]);
+  
+  useEffect(() => {
+    const hoster = characters.map((character) => ({
+      id: character.id,
+      img: character.img,
+      name: character.name,
+      ap: character.ap,
+      range: character.range,
+      power: character.power,
+      shield: character.shield,
+      life: character.life,
+      class: character.class,
+      race: character.race,
+      position: character.position,
+    }));
+    dispatch(setPlayerHoster(hoster));
+  }, [dispatch]);
 
   const onHoverCard = (card: CardInterface | null) => {
-    dispatch(setSelectedCard(card)); 
+    dispatch(setSelectedCard(card));
     dispatch(setModalOpen(true));
   };
 
   const onHoverCharacter = (character: CharacterInterface | null) => {
-    dispatch(setSelectedCharacter(character))
+    dispatch(setSelectedCharacter(character));
     dispatch(setModalOpen(true));
   };
 
   const offHover = () => {
-    dispatch(setSelectedCharacter(null))
-    dispatch(setSelectedCard(null))
+    dispatch(setSelectedCharacter(null));
+    dispatch(setSelectedCard(null));
     dispatch(setModalOpen(false));
   };
 
@@ -72,61 +108,33 @@ function Board() {
 
   const handleDrop = (e: React.DragEvent, targetPosition: number) => {
     const characterId = e.dataTransfer.getData("characterId");
-    const character = playerHoster.find((char) => char.id === characterId);
+    const character = playerHoster.findIndex((char) => char.id === characterId);
 
-    if (character && targetPosition >= 61 && targetPosition <= 66) {
-      dispatch(
-        setPlayerHoster(
-          playerHoster.map((char) =>
-            char.id === character.id
-              ? {
-                  ...char,
-                  position: targetPosition,
-                }
-              : char
-          )
-        )
-      );
+    if (character !== -1 && targetPosition >= 61 && targetPosition <= 66) {
+      const characterToMove = { ...playerHoster[character], position: targetPosition }   
+      
+      const updatedHoster = [
+          ...playerHoster.slice(0, character),
+          ... playerHoster.slice(character + 1),
+         ];
+          
+          dispatch(setPlayerHoster(updatedHoster));
+          dispatch(setBoardCharacters([... boardCharacters, characterToMove]));
+          dispatch(setSelectedCharacter(null));
     }
   };
-
+  
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
-
-  useEffect(() => {
-    const hand = cards.map((card) => ({
-      id: card.id,
-      img: card.img,
-      name: card.name,
-      cost: card.cost,
-      class: card.class,
-      type: card.type,
-      subtype: card.subtype,
-    }));
-    dispatch(setPlayerHand(hand));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const hoster = characters.map((character) => ({
-      id: character.id,
-      img: character.img,
-      name: character.name,
-      ap: character.ap,
-      range: character.range,
-      power: character.power,
-      shield: character.shield,
-      life: character.life,
-      class: character.class,
-      race: character.race,
-      position: character.position,
-    }));
-    dispatch(setPlayerHoster(hoster));
-  }, [dispatch]);
-
+  
   return (
     <>
-      <PlayerHoster hover={() => setHosterHover(true)} unHover={() => setHosterHover(false)}>
+      <PlayerHoster
+        hover={() => setHosterHover(true)}
+        unHover={() => setHosterHover(false)}
+        sx={{ display: playerHoster.length === 0 ? "none" : "flex" }}
+        >
         {playerHoster
           .filter((character) => character.position === 0)
           .slice(0, 6)
@@ -175,18 +183,16 @@ function Board() {
           {rows.map((row) =>
             cols.map((col) => {
               const id = row + col;
-              const characterInCell = playerHoster.find(
+              const characterInCell = boardCharacters.find(
                 (character) => character.position === id
               );
               return (
                 <Grid
                   key={id}
                   onClick={() => handlePositionCharacter(id)}
-                  onMouseEnter={(e) =>
-                    {
-                      characterInCell && onHoverCharacter(characterInCell)
-                    }
-                  }
+                  onMouseEnter={(e) => {
+                    characterInCell && onHoverCharacter(characterInCell);
+                  }}
                   onMouseLeave={offHover}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, id)}
@@ -196,7 +202,7 @@ function Board() {
                     width: "150px",
                     height: "120px",
                     backgroundColor:
-                      id >= 61 && id <= 66 && hosterHover
+                      id >= 61 && id <= 66 && selectedCharacter && selectedCharacter.position === 0 
                         ? "lightgreen"
                         : "green",
                     cursor:

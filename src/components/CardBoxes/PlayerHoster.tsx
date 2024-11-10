@@ -5,9 +5,10 @@ interface PlayerHosterProps {
   children: React.ReactNode;
   hover?: ()=>void;
   unHover?: ()=>void;
+  sx?: object;
 }
 
-function PlayerHoster({ children, hover, unHover }: PlayerHosterProps) {
+function PlayerHoster({ children, hover, unHover, sx }: PlayerHosterProps) {
   return (
     <>
       <Grid
@@ -25,6 +26,7 @@ function PlayerHoster({ children, hover, unHover }: PlayerHosterProps) {
           backgroundColor: "blue",
           flexWrap: "wrap",
           margin: "15px",
+          ...sx,
         }}
       >
         {children}
