@@ -12,11 +12,14 @@ import {
   setSelectedCard,
   setSelectedCharacter,
   setModalOpen,
+  setDialogOpen,
   setPlayerHoster,
   setPlayerHand,
   setBoardCharacters,
+  setPossibleMoves,
 } from "../store/models/gameSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import OptionsDialog from "./modals/OptionsDialog";
 
 const cols = [1, 2, 3, 4, 5, 6];
 const rows = [10, 20, 30, 40, 50, 60];
@@ -25,14 +28,56 @@ function Board() {
   const [hosterHover, setHosterHover] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
+  
   const {
     playerHand,
     playerHoster,
     boardCharacters,
-    selectedCard,
     selectedCharacter,
+    possibleMoves,
+    selectedCard,
     modalOpen,
+    dialogOpen,
   } = useAppSelector((state) => state.rootReducers.game);
+
+  const calculatePossibleMoves = (character: CharacterInterface) => {
+    const position = character.position;
+    const moves: number[] = [];
+
+    const possiblePositions = [
+      position-1,
+      position+1,
+      position-10,
+      position+10,
+    ];
+
+    possiblePositions.forEach((position) => {
+      if (position >= 1 && position <= 66){
+        moves.push(position);
+      }
+    });
+
+    dispatch(setPossibleMoves(moves));
+  };
+
+  const gridColor = (id: number) => {
+    return possibleMoves.includes(id) ? 'lightgreen' : 'green';
+  };
+
+  const handleMoveAction = () =>{
+    if (selectedCharacter){
+      calculatePossibleMoves(selectedCharacter);
+    }
+  };
+
+  const handleMoveCharacter = (id: number) => {
+    if(selectedCharacter && possibleMoves.includes(id)){
+      const updatedCharacter = {...selectedCharacter, position: id};
+      const updatedBoard = boardCharacters.map((character) => character.id === selectedCharacter.id ? updatedCharacter : character);
+
+      dispatch(setBoardCharacters(updatedBoard));
+    }
+  };
 
   useEffect(() => {
     const hand = cards.map((card) => ({
@@ -74,6 +119,11 @@ function Board() {
     dispatch(setModalOpen(true));
   };
 
+  const onClickCharacter = (character: CharacterInterface | null) => {
+    dispatch(setSelectedCharacter(character));
+    dispatch(setDialogOpen(true));
+  };
+
   const offHover = () => {
     dispatch(setSelectedCharacter(null));
     dispatch(setSelectedCard(null));
@@ -82,21 +132,6 @@ function Board() {
 
   const handleSelectedCharacter = (character: CharacterInterface) => {
     dispatch(setSelectedCharacter(character));
-  };
-
-  const handlePositionCharacter = (position: number) => {
-    if (selectedCharacter && position >= 61 && position <= 66) {
-      dispatch(
-        setPlayerHoster(
-          playerHoster.map((character) =>
-            character.id === selectedCharacter.id
-              ? { ...character, position }
-              : character
-          )
-        )
-      );
-      dispatch(setSelectedCharacter(null));
-    }
   };
 
   const handleDragStart = (
@@ -186,14 +221,15 @@ function Board() {
               const characterInCell = boardCharacters.find(
                 (character) => character.position === id
               );
+
               return (
                 <Grid
                   key={id}
-                  onClick={() => handlePositionCharacter(id)}
                   onMouseEnter={(e) => {
                     characterInCell && onHoverCharacter(characterInCell);
                   }}
                   onMouseLeave={offHover}
+                  onClick={() => characterInCell ? onClickCharacter(characterInCell) : null}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, id)}
                   size={{ xs: 2 }}
@@ -234,6 +270,11 @@ function Board() {
             onClose={offHover}
             card={selectedCard ? selectedCard : selectedCharacter}
           ></CardModal>
+        </Box>
+
+        <Box>
+          <OptionsDialog open={dialogOpen} onClose={offHover} selectedValue={selectedCharacter || null}>
+          </OptionsDialog>
         </Box>
       </Box>
     </>

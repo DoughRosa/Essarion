@@ -6,18 +6,22 @@ interface GameState {
   playerHand: CardInterface[];
   playerHoster: CharacterInterface[];
   boardCharacters: CharacterInterface[];
+  possibleMoves: number[];
   selectedCard: CardInterface | null;
   selectedCharacter: CharacterInterface | null;
   modalOpen: boolean;
+  dialogOpen: boolean;
 }
 
 const initialState: GameState = {
   playerHand: [],
   playerHoster: [],
   boardCharacters: [],
+  possibleMoves: [],
   selectedCard: null,
   selectedCharacter: null,
   modalOpen: false,
+  dialogOpen: false,
 };
 
 const gameSlice = createSlice({
@@ -26,6 +30,9 @@ const gameSlice = createSlice({
   reducers: {
     setPlayerHand: (state, action: PayloadAction<CardInterface[]>) => {
       state.playerHand = action.payload;
+    },
+    setPossibleMoves: (state, action: PayloadAction<number[]>) => {
+      state.possibleMoves = action.payload;
     },
     setPlayerHoster: (state, action: PayloadAction<CharacterInterface[]>) => {
       state.playerHoster = action.payload;
@@ -45,6 +52,9 @@ const gameSlice = createSlice({
     setModalOpen: (state, action: PayloadAction<boolean>) => {
       state.modalOpen = action.payload;
     },
+    setDialogOpen: (state, action: PayloadAction<boolean>) => {
+      state.dialogOpen = action.payload;
+    }
   },
 });
 
@@ -52,9 +62,11 @@ export const {
   setPlayerHand,
   setPlayerHoster,
   setBoardCharacters,
+  setPossibleMoves,
   setSelectedCard,
   setSelectedCharacter,
   setModalOpen,
+  setDialogOpen,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

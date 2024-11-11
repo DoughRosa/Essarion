@@ -11,9 +11,7 @@ interface CardModalProps{
 function CardModal({open, onClose, card}: CardModalProps){
     if (!open) return null;
     
-    console.log('MODAL', card)
     return(
-    
             <Box  
             sx={{ position: 'fixed', right: '0px', top: '15px' }} 
                 onMouseLeave={onClose}>
